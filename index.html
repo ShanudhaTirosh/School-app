@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #06b6d4;
+            --dark-bg: #1e293b;
+            --dark-card: #334155;
+            --light-bg: #f8fafc;
+            --text-dark: #0f172a;
+            --text-light: #e2e8f0;
+            --border-color: #e2e8f0;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--light-bg);
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            background: var(--dark-bg);
+            color: var(--text-light);
+        }
+
+        .login-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            min-width: 400px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .login-card h2 {
+            color: white;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 12px;
+            padding: 12px 16px;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+            color: white;
+        }
+
+        .btn-login {
+            background: linear-gradient(45deg, #fff, #f8fafc);
+            color: var(--primary-color);
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            color: var(--primary-color);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: white;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            transform: translateX(-100%);
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .dark-mode .sidebar {
+            background: var(--dark-card);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .dark-mode .sidebar-header {
+            border-color: #475569;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 1rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode .nav-link {
+            color: var(--text-light);
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .nav-link i {
+            margin-right: 0.75rem;
+            width: 20px;
+        }
+
+        .main-content {
+            margin-left: 0;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        .main-content.sidebar-open {
+            margin-left: var(--sidebar-width);
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .dark-mode .header {
+            background: var(--dark-card);
+        }
+
+        .content-area {
+            padding: 2rem;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode .stats-card {
+            background: var(--dark-card);
+            border-color: #475569;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .data-table {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .dark-mode .data-table {
+            background: var(--dark-card);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .dark-mode .table {
+            color: var(--text-light);
+        }
+
+        .table th {
+            background: var(--light-bg);
+            border: none;
+            font-weight: 600;
+            padding: 1rem;
+        }
+
+        .dark-mode .table th {
+            background: #475569;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-color: var(--border-color);
+        }
+
+        .dark-mode .table td {
+            border-color: #475569;
+        }
+
+        .btn-action {
+            padding: 0.375rem 0.75rem;
+            border-radius: 8px;
+            border: none;
+            margin: 0 0.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: #fbbf24;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-view {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .modal-content {
+            border-radius: 16px;
+            border: none;
+        }
+
+        .dark-mode .modal-content {
+            background: var(--dark-card);
+            color: var(--text-light);
+        }
+
+        .dark-mode .form-control {
+            background: #475569;
+            border-color: #64748b;
+            color: var(--text-light);
+        }
+
+        .dark-mode .form-control:focus {
+            background: #475569;
+            border-color: var(--primary-color);
+            color: var(--text-light);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            font-size: 1.25rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode .theme-toggle {
+            color: var(--text-light);
+        }
+
+        .theme-toggle:hover {
+            background: var(--border-color);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background: #475569;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .spinner-border {
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+            }
+            
+            .main-content.sidebar-open {
+                margin-left: 0;
+            }
+            
+            .stats-card {
+                margin-bottom: 1rem;
+            }
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary-color);
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        .dark-mode .file-upload {
+            border-color: #475569;
+        }
+
+        .dark-mode .file-upload:hover {
+            border-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-card">
+            <h2><i class="fas fa-graduation-cap me-2"></i>School Management</h2>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <input type="email" class="form-control" id="email" placeholder="Email Address" required>
+                </div>
+                <div class="mb-3">
+                    <input type="password" class="form-control" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-login w-100">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </button>
+            </form>
+            <div class="text-center mt-3">
+                <small style="color: rgba(255,255,255,0.7);">Demo: admin@school.com / admin123</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboardContainer" class="hidden">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h4><i class="fas fa-graduation-cap me-2"></i>School MS</h4>
+            </div>
+            <ul class="sidebar-nav list-unstyled">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" data-page="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="students">
+                        <i class="fas fa-user-graduate"></i>Students
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="teachers">
+                        <i class="fas fa-chalkboard-teacher"></i>Teachers
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="classes">
+                        <i class="fas fa-door-open"></i>Classes & Subjects
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="attendance">
+                        <i class="fas fa-calendar-check"></i>Attendance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="grades">
+                        <i class="fas fa-chart-line"></i>Exams & Grades
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="files">
+                        <i class="fas fa-folder-open"></i>Files & Reports
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="announcements">
+                        <i class="fas fa-bullhorn"></i>Announcements
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-page="messages">
+                        <i class="fas fa-envelope"></i>Messages
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <!-- Header -->
+            <header class="header">
+                <div class="d-flex align-items-center">
+                    <button class="btn" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h5 class="ms-3 mb-0" id="pageTitle">Dashboard</h5>
+                </div>
+                <div class="d-flex align-items-center">
+                    <button class="theme-toggle me-3" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-2"></i>Admin
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Dashboard Page -->
+                <div id="dashboardPage" class="page-content">
+                    <div class="row mb-4">
+                        <div class="col-md-3 mb-3">
+                            <div class="stats-card">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h3 class="mb-1" id="totalStudents">0</h3>
+                                        <p class="text-muted mb-0">Total Students</p>
+                                    </div>
+                                    <div class="text-primary">
+                                        <i class="fas fa-user-graduate fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="stats-card">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h3 class="mb-1" id="totalTeachers">0</h3>
+                                        <p class="text-muted mb-0">Total Teachers</p>
+                                    </div>
+                                    <div class="text-success">
+                                        <i class="fas fa-chalkboard-teacher fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="stats-card">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h3 class="mb-1" id="totalClasses">0</h3>
+                                        <p class="text-muted mb-0">Total Classes</p>
+                                    </div>
+                                    <div class="text-warning">
+                                        <i class="fas fa-door-open fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="stats-card">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h3 class="mb-1">95%</h3>
+                                        <p class="text-muted mb-0">Attendance Rate</p>
+                                    </div>
+                                    <div class="text-info">
+                                        <i class="fas fa-calendar-check fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="stats-card">
+                                <h5 class="mb-3">Recent Students</h5>
+                                <div id="recentStudents" class="loading">
+                                    <div class="spinner-border" role="status"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="stats-card">
+                                <h5 class="mb-3">Recent Announcements</h5>
+                                <div id="recentAnnouncements">
+                                    <div class="d-flex align-items-start mb-3">
+                                        <div class="bg-primary rounded-circle p-2 me-3">
+                                            <i class="fas fa-bullhorn text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1">New Academic Year</h6>
+                                            <p class="text-muted small mb-0">Classes will start from Monday</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students Page -->
+                <div id="studentsPage" class="page-content hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4>Student Management</h4>
+                        <div>
+                            <button class="btn btn-outline-primary me-2" onclick="exportStudentsCSV()">
+                                <i class="fas fa-download me-2"></i>Export CSV
+                            </button>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#studentModal">
+                                <i class="fas fa-plus me-2"></i>Add Student
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <select class="form-select" id="gradeFilter">
+                                <option value="">All Grades</option>
+                                <option value="1">Grade 1</option>
+                                <option value="2">Grade 2</option>
+                                <option value="3">Grade 3</option>
+                                <option value="4">Grade 4</option>
+                                <option value="5">Grade 5</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="classFilter">
+                                <option value="">All Classes</option>
+                                <option value="A">Class A</option>
+                                <option value="B">Class B</option>
+                                <option value="C">Class C</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="studentSearch" placeholder="Search students...">
+                        </div>
+                    </div>
+
+                    <!-- Students Table -->
+                    <div class="data-table">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Grade</th>
+                                    <th>Class</th>
+                                    <th>Email</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        <div class="loading">
+                                            <div class="spinner-border" role="status"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Teachers Page -->
+                <div id="teachersPage" class="page-content hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4>Teacher Management</h4>
+                        <div>
+                            <button class="btn btn-outline-primary me-2" onclick="exportTeachersCSV()">
+                                <i class="fas fa-download me-2"></i>Export CSV
+                            </button>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#teacherModal">
+                                <i class="fas fa-plus me-2"></i>Add Teacher
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Teachers Table -->
+                    <div class="data-table">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Subject</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teachersTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        <div class="loading">
+                                            <div class="spinner-border" role="status"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Classes Page -->
+                <div id="classesPage" class="page-content hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4>Classes & Subjects</h4>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#classModal">
+                            <i class="fas fa-plus me-2"></i>Add Class
+                        </button>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="stats-card">
+                                <h5 class="mb-3">Classes</h5>
+                                <div id="classesList"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="stats-card">
+                                <h5 class="mb-3">Subject Assignments</h5>
+                                <div id="subjectAssignments"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Page -->
+                <div id="attendancePage" class="page-content hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4>Attendance Management</h4>
+                        <button class="btn btn-primary" onclick="markAttendance()">
+                            <i class="fas fa-check me-2"></i>Mark Today's Attendance
+                        </button>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <input type="date" class="form-control" id="attendanceDate" value="">
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="attendanceGrade">
+                                <option value="">Select Grade</option>
+                                <option value="1">Grade 1</option>
+                                <option value="2">Grade 2</option>
+                                <option value="3">Grade 3</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="attendanceClass">
+                                <option value="">Select Class</option>
+                                <option value="A">Class A</option>
+                                <option value="B">Class B</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-primary" onclick="loadAttendance()">
+                                <i class="fas fa-search"></i> Load
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="data-table">
+                        <div id="attendanceContent" class="p-4 text-center text-muted">
+                            Select date, grade, and class to view attendance
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grades Page -->
+                <div id="gradesPage" class="page-content hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4>Exams & Grades</h4>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#gradeModal">
+                            <i class="fas fa-plus me-2"></i>Add Grade
+                        </button>
+                    </div>
+
+                    <div class="data-table">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Subject</th>
+                                    <th>Exam Type</th>
+                                    <th>Grade</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gradesTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        <div class="loading">
+                                            <div class="spinner-border" role="status"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Files Page -->
+                <div id="filesPage" class="page-content hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4>Files & Reports</h4>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#fileModal">
+                            <i class="fas fa-upload me-2"></i>Upload File
+                        </button>
+                    </div>
+
+                    <div class="row" id="filesGrid">
+                        <!-- Files will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Announcements Page -->
+                <div id="announcementsPage" class="page-content hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4>Announcements</h4>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#announcementModal">
+                            <i class="fas fa-plus me-2"></i>New Announcement
+                        </button>
+                    </div>
+
+                    <div id="announcementsList"></div>
+                </div>
+
+                <!-- Messages Page -->
+                <div id="messagesPage" class="page-content hidden">
+                    <h4 class="mb-4">Parent Messages & Feedback</h4>
+                    <div id="messagesList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Student Modal -->
+    <div class="modal fade" id="studentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add/Edit Student</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="studentForm">
+                        <input type="hidden" id="studentId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="studentFirstName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="studentLastName" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Grade</label>
+                                <select class="form-select" id="studentGrade" required>
+    <option value="">Select Grade</option>
+    <option value="1">Grade 1</option>
+    <option value="2">Grade 2</option>
+    <option value="3">Grade 3</option>
+    <option value="4">Grade 4</option>
+    <option value="5">Grade 5</option>
+</select>
+</div>
+<div class="col-md-6 mb-3">
+    <label class="form-label">Class</label>
+    <select class="form-select" id="studentClass" required>
+        <option value="">Select Class</option>
+        <option value="A">Class A</option>
+        <option value="B">Class B</option>
+        <option value="C">Class C</option>
+    </select>
+</div>
+</div>
+<div class="mb-3">
+    <label class="form-label">Email</label>
+    <input type="email" class="form-control" id="studentEmail" required>
+</div>
+<div class="mb-3">
+    <label class="form-label">Phone</label>
+    <input type="text" class="form-control" id="studentPhone">
+</div>
+<div class="text-end">
+    <button type="submit" class="btn btn-primary">
+        <i class="fas fa-save me-2"></i>Save
+    </button>
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Include Bootstrap JS and Optional Scripts -->
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script src="app.js"></script> <!-- Assuming you’ll create this to manage logic -->
+</body>
+</html>
